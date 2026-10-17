@@ -58,14 +58,14 @@ export default function AddTask() {
 
   if (isEditMode && !existingTask) {
     return (
-      <section className="mx-auto max-w-xl px-6 py-20 text-center">
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/90 p-8">
-          <h1 className="text-xl font-bold text-white">Task Not Found</h1>
-          <p className="mt-2 text-sm text-zinc-400">
+      <section className="mx-auto max-w-xl px-4 py-12 text-center sm:px-6 sm:py-20">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900/90 p-6 sm:p-8">
+          <h1 className="text-lg font-bold text-white sm:text-xl">Task Not Found</h1>
+          <p className="mt-2 text-xs text-zinc-400 sm:text-sm">
             The requested task does not exist or was deleted.
           </p>
-          <div className="mt-6">
-            <Link to="/tasks" className="btn-primary">
+          <div className="mt-5 sm:mt-6">
+            <Link to="/tasks" className="btn-primary w-full sm:w-auto">
               Return to Backlog
             </Link>
           </div>
@@ -75,8 +75,8 @@ export default function AddTask() {
   }
 
   return (
-    <section className="mx-auto max-w-2xl px-6 py-12">
-      <div className="mb-6">
+    <section className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-12">
+      <div className="mb-4 sm:mb-6">
         <Link
           to="/tasks"
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 transition hover:text-white"
@@ -86,23 +86,23 @@ export default function AddTask() {
         </Link>
       </div>
 
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/90 p-8 sm:p-10">
-        <div className="border-b border-zinc-800 pb-6">
-          <h1 className="font-display text-2xl font-bold text-white sm:text-3xl">
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/90 p-5 sm:p-10">
+        <div className="border-b border-zinc-800 pb-5 sm:pb-6">
+          <h1 className="font-display text-xl font-bold text-white sm:text-3xl">
             {isEditMode ? 'Edit Task' : 'Add New Task'}
           </h1>
-          <p className="mt-1 text-sm text-zinc-300">
+          <p className="mt-1 text-xs text-zinc-300 sm:text-sm">
             {isEditMode
               ? 'Update the parameters for this milestone.'
               : 'Register a new milestone in your execution registry.'}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-8 space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-6 space-y-5 sm:mt-8 sm:space-y-6">
           <div>
             <label
               htmlFor="title"
-              className="mb-2 block text-xs font-semibold uppercase tracking-wider text-zinc-300"
+              className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-zinc-300"
             >
               Task Title
             </label>
@@ -125,7 +125,7 @@ export default function AddTask() {
           <div>
             <label
               htmlFor="description"
-              className="mb-2 block text-xs font-semibold uppercase tracking-wider text-zinc-300"
+              className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-zinc-300"
             >
               Description
             </label>
@@ -143,11 +143,11 @@ export default function AddTask() {
             )}
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-3 sm:gap-4 sm:grid-cols-3">
             <div>
               <label
                 htmlFor="status"
-                className="mb-2 block text-xs font-semibold uppercase tracking-wider text-zinc-300"
+                className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-zinc-300"
               >
                 Status
               </label>
@@ -165,7 +165,7 @@ export default function AddTask() {
             <div>
               <label
                 htmlFor="priority"
-                className="mb-2 block text-xs font-semibold uppercase tracking-wider text-zinc-300"
+                className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-zinc-300"
               >
                 Priority
               </label>
@@ -183,7 +183,7 @@ export default function AddTask() {
             <div>
               <label
                 htmlFor="dueDate"
-                className="mb-2 block text-xs font-semibold uppercase tracking-wider text-zinc-300"
+                className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-zinc-300"
               >
                 Due Date
               </label>
@@ -192,12 +192,11 @@ export default function AddTask() {
                 type="date"
                 {...register('dueDate', { required: 'Due date is required' })}
                 className="input-field"
-              >
-              </input>
+              />
             </div>
           </div>
 
-          <div className="border-t border-zinc-800 pt-6">
+          <div className="border-t border-zinc-800 pt-5 sm:pt-6">
             <button type="submit" className="btn-primary w-full sm:w-auto">
               {isEditMode ? 'Save Changes' : 'Create Task'}
             </button>

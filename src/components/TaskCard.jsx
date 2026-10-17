@@ -22,9 +22,9 @@ export default function TaskCard({ task }) {
   const priorityStyle = PRIORITY_BADGE[task.priority] || PRIORITY_BADGE.Medium;
 
   return (
-    <article className="flex flex-col justify-between rounded-xl border border-zinc-800 bg-zinc-900/80 p-6 shadow-sm transition hover:border-zinc-700">
+    <article className="flex flex-col justify-between rounded-xl border border-zinc-800 bg-zinc-900/80 p-5 sm:p-6 shadow-sm transition hover:border-zinc-700">
       <div>
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <div className="mb-3.5 flex flex-wrap items-center justify-between gap-2 sm:mb-4">
           <button
             type="button"
             onClick={() => toggleTaskStatus(task.id)}
@@ -46,22 +46,22 @@ export default function TaskCard({ task }) {
           </span>
         </div>
 
-        <h3 className="text-lg font-bold tracking-tight text-white">
+        <h3 className="font-display text-base font-bold tracking-tight text-white break-words sm:text-lg">
           {task.title}
         </h3>
 
-        <p className="mt-2 text-sm leading-relaxed text-zinc-300 whitespace-pre-line">
+        <p className="mt-2 text-xs leading-relaxed text-zinc-300 whitespace-pre-line break-words sm:text-sm">
           {task.description || 'No additional details provided.'}
         </p>
       </div>
 
-      <div className="mt-6 flex items-center justify-between border-t border-zinc-800 pt-4 text-xs text-zinc-400">
-        <span className="inline-flex items-center gap-1.5">
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-2.5 border-t border-zinc-800 pt-3.5 text-xs text-zinc-400 sm:mt-6 sm:pt-4">
+        <span className="inline-flex items-center gap-1.5 shrink-0">
           <Calendar className="h-3.5 w-3.5 text-zinc-500" />
           <span>Due: {task.dueDate || 'Flexible'}</span>
         </span>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
             onClick={() => navigate(`/edit-task/${task.id}`)}

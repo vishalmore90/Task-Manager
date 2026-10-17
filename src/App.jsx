@@ -12,7 +12,7 @@ import Terms from './pages/Terms.jsx';
 
 export default function App() {
   return (
-    <div className="flex min-h-screen flex-col bg-zinc-950 font-sans text-zinc-100">
+    <div className="flex min-h-screen flex-col bg-zinc-950 font-sans text-zinc-100 overflow-x-hidden">
       <Navbar />
       <main className="flex-1">
         <Routes>

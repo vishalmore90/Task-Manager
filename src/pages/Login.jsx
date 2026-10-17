@@ -50,16 +50,16 @@ export default function Login() {
   };
 
   return (
-    <section className="mx-auto flex min-h-[calc(100vh-140px)] max-w-md items-center px-6 py-12">
-      <div className="w-full rounded-2xl border border-zinc-800 bg-zinc-900/90 p-8 shadow-sm">
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white">
+    <section className="mx-auto flex min-h-[calc(100vh-140px)] max-w-md items-center px-4 py-8 sm:px-6 sm:py-12">
+      <div className="w-full rounded-2xl border border-zinc-800 bg-zinc-900/90 p-6 shadow-sm sm:p-8">
+        <div className="mb-6 text-center sm:mb-8">
+          <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white sm:mb-4">
             <CheckSquare className="h-5 w-5" />
           </div>
-          <h1 className="font-display text-2xl font-bold tracking-tight text-white">
+          <h1 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl">
             {isRegisterMode ? 'Create Workspace Account' : 'Welcome Back'}
           </h1>
-          <p className="mt-2 text-sm text-zinc-300">
+          <p className="mt-1.5 text-xs text-zinc-300 sm:mt-2 sm:text-sm">
             {isRegisterMode
               ? 'Enter your credentials to initialize your private workspace.'
               : 'Enter your credentials to access your active tasks.'}
@@ -67,9 +67,9 @@ export default function Login() {
         </div>
 
         {authError && (
-          <div className="mb-6 flex items-start gap-2.5 rounded-lg border border-red-900/50 bg-red-950/40 p-3.5 text-xs font-medium text-red-300">
+          <div className="mb-5 flex items-start gap-2.5 rounded-lg border border-red-900/50 bg-red-950/40 p-3 text-xs font-medium text-red-300 sm:mb-6 sm:p-3.5">
             <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
-            <span>{authError}</span>
+            <span className="break-words">{authError}</span>
           </div>
         )}
 
@@ -163,7 +163,7 @@ export default function Login() {
           </div>
         </form>
 
-        <div className="mt-6 border-t border-zinc-800 pt-6 text-center">
+        <div className="mt-6 border-t border-zinc-800 pt-5 text-center sm:pt-6">
           <button
             type="button"
             onClick={() => {
