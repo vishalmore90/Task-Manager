@@ -183,25 +183,6 @@ Task-Manager/
    ```bash
    npm run preview
    ```
-
----
-
-## Production Deployment
-
-### Vercel Deployment
-The repository includes [`vercel.json`](file:///c:/Users/Vishal/Code_File/Project%20B/Task-Manager/vercel.json) with pre-configured rewrite routes and security headers:
-1. Connect repository on [Vercel](https://vercel.com/new).
-2. Root Directory: `./`
-3. Build Command: `npm run build`
-4. Output Directory: `dist`
-5. Click **Deploy**.
-
-### Netlify Deployment
-The repository includes [`public/_redirects`](file:///c:/Users/Vishal/Code_File/Project%20B/Task-Manager/public/_redirects) and [`public/_headers`](file:///c:/Users/Vishal/Code_File/Project%20B/Task-Manager/public/_headers):
-1. Connect repository on [Netlify](https://app.netlify.com/start).
-2. Publish Directory: `dist`
-3. Click **Deploy Task-Manager**.
-
 ---
 
 ## License
