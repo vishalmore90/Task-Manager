@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useTasks } from '../context/TaskContext.jsx';
+import { ArrowLeft } from 'lucide-react';
 
 export default function AddTask() {
   const { id } = useParams();
@@ -57,87 +58,88 @@ export default function AddTask() {
 
   if (isEditMode && !existingTask) {
     return (
-      <section className="mx-auto max-w-xl px-4 py-12 text-center">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-8">
+      <section className="mx-auto max-w-xl px-6 py-20 text-center">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900/90 p-8">
           <h1 className="text-xl font-bold text-white">Task Not Found</h1>
-          <p className="mt-2 text-sm text-slate-400">
-            The task you are trying to edit does not exist or was deleted.
+          <p className="mt-2 text-sm text-zinc-400">
+            The requested task does not exist or was deleted.
           </p>
-          <Link to="/tasks" className="btn-primary mt-5 inline-flex">
-            Back to All Tasks
-          </Link>
+          <div className="mt-6">
+            <Link to="/tasks" className="btn-primary">
+              Return to Backlog
+            </Link>
+          </div>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
-      <div className="rounded-3xl border border-slate-800 bg-slate-900/85 p-6 shadow-2xl sm:p-9">
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-white">
-              {isEditMode ? 'Edit Task' : 'Add New Task'}
-            </h1>
-            <p className="mt-1 text-sm text-slate-400">
-              {isEditMode
-                ? 'Update task details below and save your changes.'
-                : 'Fill in the details below to create a new task.'}
-            </p>
-          </div>
-          <Link to="/tasks" className="btn-secondary">
-            Cancel
-          </Link>
+    <section className="mx-auto max-w-2xl px-6 py-12">
+      <div className="mb-6">
+        <Link
+          to="/tasks"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 transition hover:text-white"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          <span>Back to All Tasks</span>
+        </Link>
+      </div>
+
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/90 p-8 sm:p-10">
+        <div className="border-b border-zinc-800 pb-6">
+          <h1 className="font-display text-2xl font-bold text-white sm:text-3xl">
+            {isEditMode ? 'Edit Task' : 'Add New Task'}
+          </h1>
+          <p className="mt-1 text-sm text-zinc-300">
+            {isEditMode
+              ? 'Update the parameters for this milestone.'
+              : 'Register a new milestone in your execution registry.'}
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-8 space-y-6">
           <div>
             <label
               htmlFor="title"
-              className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-300"
+              className="mb-2 block text-xs font-semibold uppercase tracking-wider text-zinc-300"
             >
               Task Title
             </label>
             <input
               id="title"
               type="text"
-              placeholder="e.g., Complete React JS Project"
-              className="input-field"
+              placeholder="e.g. Implement Web Crypto Password Hashing"
               {...register('title', {
                 required: 'Task title is required',
-                minLength: {
-                  value: 3,
-                  message: 'Task title must be at least 3 characters',
-                },
+                minLength: { value: 3, message: 'Minimum 3 characters required' },
+                maxLength: { value: 120, message: 'Maximum 120 characters allowed' },
               })}
+              className="input-field"
             />
             {errors.title && (
-              <p className="mt-1 text-xs text-rose-400">
-                {errors.title.message}
-              </p>
+              <p className="mt-1.5 text-xs text-red-400">{errors.title.message}</p>
             )}
           </div>
 
           <div>
             <label
               htmlFor="description"
-              className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-300"
+              className="mb-2 block text-xs font-semibold uppercase tracking-wider text-zinc-300"
             >
-              Task Description
+              Description
             </label>
             <textarea
               id="description"
               rows={4}
-              placeholder="Describe the key deliverables and acceptance criteria..."
-              className="input-field resize-y"
+              placeholder="Specify requirements, constraints, and success criteria..."
               {...register('description', {
-                required: 'Task description is required',
+                maxLength: { value: 2000, message: 'Maximum 2000 characters allowed' },
               })}
+              className="input-field"
             />
             {errors.description && (
-              <p className="mt-1 text-xs text-rose-400">
-                {errors.description.message}
-              </p>
+              <p className="mt-1.5 text-xs text-red-400">{errors.description.message}</p>
             )}
           </div>
 
@@ -145,17 +147,17 @@ export default function AddTask() {
             <div>
               <label
                 htmlFor="status"
-                className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-300"
+                className="mb-2 block text-xs font-semibold uppercase tracking-wider text-zinc-300"
               >
                 Status
               </label>
               <select
                 id="status"
+                {...register('status', { required: 'Status is required' })}
                 className="input-field"
-                {...register('status', { required: true })}
               >
-                <option value="Pending">Pending</option>
                 <option value="In Progress">In Progress</option>
+                <option value="Pending">Pending</option>
                 <option value="Completed">Completed</option>
               </select>
             </div>
@@ -163,14 +165,14 @@ export default function AddTask() {
             <div>
               <label
                 htmlFor="priority"
-                className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-300"
+                className="mb-2 block text-xs font-semibold uppercase tracking-wider text-zinc-300"
               >
                 Priority
               </label>
               <select
                 id="priority"
+                {...register('priority', { required: 'Priority is required' })}
                 className="input-field"
-                {...register('priority', { required: true })}
               >
                 <option value="High">High</option>
                 <option value="Medium">Medium</option>
@@ -181,25 +183,23 @@ export default function AddTask() {
             <div>
               <label
                 htmlFor="dueDate"
-                className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-300"
+                className="mb-2 block text-xs font-semibold uppercase tracking-wider text-zinc-300"
               >
                 Due Date
               </label>
               <input
                 id="dueDate"
                 type="date"
+                {...register('dueDate', { required: 'Due date is required' })}
                 className="input-field"
-                {...register('dueDate')}
-              />
+              >
+              </input>
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-3">
-            <Link to="/tasks" className="btn-secondary">
-              Back to All Tasks
-            </Link>
-            <button type="submit" className="btn-primary">
-              {isEditMode ? 'Update Task' : 'Add Task'}
+          <div className="border-t border-zinc-800 pt-6">
+            <button type="submit" className="btn-primary w-full sm:w-auto">
+              {isEditMode ? 'Save Changes' : 'Create Task'}
             </button>
           </div>
         </form>

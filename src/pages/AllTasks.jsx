@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTasks } from '../context/TaskContext.jsx';
 import TaskCard from '../components/TaskCard.jsx';
+import { Plus, Search } from 'lucide-react';
 
 export default function AllTasks() {
   const { tasks, resetTasks } = useTasks();
@@ -34,59 +35,64 @@ export default function AllTasks() {
   }, [tasks]);
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+    <section className="mx-auto max-w-6xl px-6 py-12">
+      {/* Header section with single primary button */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800 pb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white sm:text-3xl">
+          <h1 className="font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
             All Tasks
           </h1>
-          <p className="mt-1 text-sm text-slate-400">
-            View, filter, edit, or delete tasks across your workspace.
+          <p className="mt-1 text-sm text-zinc-300">
+            Real-time workspace backlog and active task registry.
           </p>
         </div>
 
         <Link to="/add-task" className="btn-primary">
-          + Add Task
+          <Plus className="h-4 w-4" />
+          <span>Add New Task</span>
         </Link>
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
-          <span className="text-xs font-medium text-slate-400">Total Tasks</span>
-          <p className="mt-1 text-2xl font-extrabold text-white">
+      {/* Verified Task Metric Grid */}
+      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900/80 p-5">
+          <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Total Backlog</span>
+          <p className="mt-2 text-3xl font-extrabold text-white">
             {counts.total}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
-          <span className="text-xs font-medium text-amber-300">Pending</span>
-          <p className="mt-1 text-2xl font-extrabold text-amber-300">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900/80 p-5">
+          <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Pending</span>
+          <p className="mt-2 text-3xl font-extrabold text-zinc-200">
             {counts.pending}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
-          <span className="text-xs font-medium text-sky-300">In Progress</span>
-          <p className="mt-1 text-2xl font-extrabold text-sky-300">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900/80 p-5">
+          <span className="text-xs font-semibold uppercase tracking-wider text-blue-400">In Progress</span>
+          <p className="mt-2 text-3xl font-extrabold text-blue-400">
             {counts.inProgress}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
-          <span className="text-xs font-medium text-emerald-300">
-            Completed
-          </span>
-          <p className="mt-1 text-2xl font-extrabold text-emerald-300">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900/80 p-5">
+          <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Completed</span>
+          <p className="mt-2 text-3xl font-extrabold text-white">
             {counts.completed}
           </p>
         </div>
       </div>
 
-      <div className="mt-6 grid gap-3 rounded-2xl border border-slate-800 bg-slate-900/60 p-4 sm:grid-cols-3">
-        <input
-          type="search"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search tasks by title or description..."
-          className="input-field"
-        />
+      {/* Filter and Search Bar */}
+      <div className="mt-8 grid gap-4 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4 sm:grid-cols-3">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-zinc-500" />
+          <input
+            type="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by title or description..."
+            className="input-field pl-10"
+          />
+        </div>
 
         <select
           value={statusFilter}
@@ -113,32 +119,34 @@ export default function AllTasks() {
         </select>
       </div>
 
+      {/* Task Grid */}
       {filteredTasks.length > 0 ? (
-        <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredTasks.map((task) => (
             <TaskCard key={task.id} task={task} />
           ))}
         </div>
       ) : (
-        <div className="mt-8 rounded-3xl border border-dashed border-slate-800 bg-slate-900/40 p-10 text-center">
+        <div className="mt-12 rounded-xl border border-dashed border-zinc-800 bg-zinc-900/30 p-12 text-center">
           <h2 className="text-lg font-bold text-white">No Tasks Found</h2>
-          <p className="mt-1.5 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-zinc-400">
             {tasks.length === 0
-              ? 'Your task list is currently empty. Add your first task or load the sample tasks.'
-              : 'No tasks match your current search or filter criteria.'}
+              ? 'Your workspace is clear. Add your first task below.'
+              : 'No tasks match the active filter criteria.'}
           </p>
-          <div className="mt-5 flex flex-wrap justify-center gap-3">
-            <Link to="/add-task" className="btn-primary">
-              + Add Task
-            </Link>
-            {tasks.length === 0 && (
+          <div className="mt-6">
+            {tasks.length === 0 ? (
               <button
                 type="button"
                 onClick={resetTasks}
-                className="btn-secondary"
+                className="btn-primary"
               >
                 Load Sample Tasks
               </button>
+            ) : (
+              <Link to="/add-task" className="btn-primary">
+                Add Task
+              </Link>
             )}
           </div>
         </div>

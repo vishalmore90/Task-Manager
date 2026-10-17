@@ -1,9 +1,10 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useTasks } from '../context/TaskContext.jsx';
+import { CheckSquare, LogOut } from 'lucide-react';
 
 export default function Navbar() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const { tasks } = useTasks();
   const navigate = useNavigate();
 
@@ -13,30 +14,30 @@ export default function Navbar() {
   };
 
   const navLinkClass = ({ isActive }) =>
-    `px-3.5 py-2 rounded-lg text-sm font-medium transition ${
+    `px-3 py-1.5 rounded-lg text-sm font-medium transition ${
       isActive
-        ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/30'
-        : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+        ? 'bg-blue-600 text-white'
+        : 'text-zinc-200 hover:bg-zinc-900 hover:text-white'
     }`;
 
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6">
+    <header className="sticky top-0 z-30 border-b border-zinc-800 bg-zinc-950/95 backdrop-blur-sm">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link
           to={isAuthenticated ? '/tasks' : '/'}
-          className="flex items-center gap-2.5 text-lg font-bold tracking-tight text-white transition hover:opacity-90"
+          className="flex items-center gap-3 text-base font-bold tracking-tight text-white transition hover:opacity-90"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-sm font-extrabold text-white shadow-md shadow-indigo-600/30">
-            TM
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white">
+            <CheckSquare className="h-4 w-4" />
           </span>
-          <span>Task Manager</span>
+          <span className="font-display text-lg tracking-tight">Task Manager</span>
         </Link>
 
         {isAuthenticated ? (
-          <nav className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <nav className="flex items-center gap-1 sm:gap-2">
             <NavLink to="/tasks" className={navLinkClass}>
               All Tasks
-              <span className="ml-1.5 rounded-full bg-slate-800 px-2 py-0.5 text-xs font-semibold text-indigo-300">
+              <span className="ml-1.5 rounded-md bg-zinc-800 px-1.5 py-0.5 text-xs font-semibold text-zinc-200">
                 {tasks.length}
               </span>
             </NavLink>
@@ -46,23 +47,37 @@ export default function Navbar() {
             </NavLink>
 
             <NavLink to="/profile" className={navLinkClass}>
-              Profile ({user?.name})
+              Profile
+            </NavLink>
+
+            <NavLink to="/privacy" className={navLinkClass}>
+              Privacy
             </NavLink>
 
             <button
               type="button"
               onClick={handleLogout}
-              className="ml-1 rounded-lg border border-rose-500/30 bg-rose-500/10 px-3.5 py-2 text-sm font-semibold text-rose-300 transition hover:bg-rose-600 hover:text-white"
+              className="ml-2 inline-flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-zinc-300 transition hover:bg-zinc-800 hover:text-white"
             >
-              Logout
+              <LogOut className="h-3.5 w-3.5" />
+              <span>Logout</span>
             </button>
           </nav>
         ) : (
-          <div className="flex items-center gap-3">
-            <Link to="/login" className="btn-primary">
+          <nav className="flex items-center gap-2">
+            <NavLink to="/" className={navLinkClass}>
+              Home
+            </NavLink>
+            <NavLink to="/privacy" className={navLinkClass}>
+              Privacy
+            </NavLink>
+            <NavLink to="/terms" className={navLinkClass}>
+              Terms
+            </NavLink>
+            <Link to="/login" className="btn-primary ml-2">
               Login
             </Link>
-          </div>
+          </nav>
         )}
       </div>
     </header>

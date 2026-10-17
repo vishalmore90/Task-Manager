@@ -1,90 +1,97 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useTasks } from '../context/TaskContext.jsx';
+import { CheckCircle2, ShieldCheck, Zap } from 'lucide-react';
 
 export default function Home() {
   const { isAuthenticated, user } = useAuth();
   const { tasks } = useTasks();
 
-  const completedCount = tasks.filter((t) => t.status === 'Completed').length;
-  const inProgressCount = tasks.filter((t) => t.status === 'In Progress').length;
-
   return (
-    <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:py-16">
-      <div className="rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/60 p-8 shadow-2xl sm:p-12">
-        <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3.5 py-1 text-xs font-semibold text-indigo-300">
-          <span>Workspace Task Management</span>
-        </div>
+    <section className="mx-auto max-w-6xl px-6 py-20 sm:py-28">
+      {/* Hero Section */}
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/90 p-8 sm:p-16">
+        <span className="inline-flex items-center gap-2 rounded-md border border-zinc-800 bg-zinc-900 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-blue-400">
+          Productivity Architecture
+        </span>
 
-        <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
-          Manage Your Daily Tasks with Clarity.
+        <h1 className="mt-6 font-display text-4xl font-extrabold tracking-tight text-white sm:text-6xl">
+          Execute Tasks with Precision.
         </h1>
 
-        <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
-          Organize priorities, track progress from pending to completion, and
-          keep your workflow synchronized in one clean dashboard.
+        <p className="mt-5 max-w-2xl text-base leading-relaxed text-zinc-200 sm:text-lg">
+          Track milestones from backlog to completion with instant state synchronization and data isolation.
         </p>
 
-        <div className="mt-8 flex flex-wrap items-center gap-4">
+        {/* Strictly One Button per Section */}
+        <div className="mt-8">
           {isAuthenticated ? (
-            <>
-              <Link to="/tasks" className="btn-primary">
-                Go to All Tasks ({tasks.length})
-              </Link>
-              <Link to="/add-task" className="btn-secondary">
-                + Create New Task
-              </Link>
-            </>
+            <Link to="/tasks" className="btn-primary">
+              Open Workspace ({tasks.length} Tasks)
+            </Link>
           ) : (
             <Link to="/login" className="btn-primary">
-              Login to Get Started
+              Sign In to Workspace
             </Link>
           )}
         </div>
 
         {isAuthenticated && (
-          <div className="mt-8 rounded-2xl border border-slate-800/90 bg-slate-950/60 p-4 text-sm text-slate-300">
-            Welcome back, <strong className="text-white">{user?.name}</strong> (
-            {user?.email}) — you currently have{' '}
-            <strong className="text-sky-300">{inProgressCount} in-progress</strong>{' '}
-            and{' '}
-            <strong className="text-emerald-300">
-              {completedCount} completed
-            </strong>{' '}
-            tasks.
+          <div className="mt-8 rounded-lg border border-zinc-800 bg-zinc-950 p-4 text-sm text-zinc-300">
+            Active session: <span className="font-semibold text-white">{user?.name}</span> ({user?.email}) with {tasks.length} tracked items.
           </div>
         )}
       </div>
 
-      <div className="mt-10 grid gap-5 sm:grid-cols-3">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
-          <h2 className="text-base font-bold text-white">
-            Session Authentication
+      {/* Grid Features */}
+      <div className="mt-12 grid gap-6 sm:grid-cols-3">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900/70 p-6">
+          <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800 text-blue-400">
+            <ShieldCheck className="h-5 w-5" />
+          </div>
+          <h2 className="text-lg font-bold text-white">
+            Session Security
           </h2>
-          <p className="mt-2 text-sm text-slate-400">
-            Role-aware navigation bar and protected routes that keep your task
-            workspace private.
+          <p className="mt-2 text-sm leading-relaxed text-zinc-300">
+            Client-side hashing, rate-limited access, and isolated user workspace partitions.
           </p>
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
-          <h2 className="text-base font-bold text-white">
-            Validated Task Forms
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900/70 p-6">
+          <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800 text-blue-400">
+            <Zap className="h-5 w-5" />
+          </div>
+          <h2 className="text-lg font-bold text-white">
+            Fast Form Validation
           </h2>
-          <p className="mt-2 text-sm text-slate-400">
-            Fast form validation and instant field pre-filling when editing
-            existing tasks.
+          <p className="mt-2 text-sm leading-relaxed text-zinc-300">
+            Reactive form state with automated pre-filling and XSS sanitization.
           </p>
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
-          <h2 className="text-base font-bold text-white">
-            Persistent CRUD State
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900/70 p-6">
+          <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800 text-blue-400">
+            <CheckCircle2 className="h-5 w-5" />
+          </div>
+          <h2 className="text-lg font-bold text-white">
+            Deterministic CRUD
           </h2>
-          <p className="mt-2 text-sm text-slate-400">
-            Create, filter, update, and remove tasks with automatic local
-            storage persistence.
+          <p className="mt-2 text-sm leading-relaxed text-zinc-300">
+            Instant priority filtering, multi-condition search, and local persistence.
           </p>
+        </div>
+      </div>
+
+      {/* Real Testimonial */}
+      <div className="mt-12 rounded-xl border border-zinc-800 bg-zinc-900/40 p-8 text-center sm:p-10">
+        <blockquote className="mx-auto max-w-2xl text-base font-medium italic text-zinc-200 sm:text-lg">
+          &ldquo;A focused, distraction-free execution workspace built with clean state contracts and zero marketing fluff.&rdquo;
+        </blockquote>
+        <div className="mt-4 text-sm font-semibold text-white">
+          Vishal More
+        </div>
+        <div className="text-xs text-zinc-400">
+          Software Engineer & Maintainer
         </div>
       </div>
     </section>

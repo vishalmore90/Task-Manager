@@ -1,9 +1,12 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { sanitizeText, sanitizeEmail } from '../utils/sanitize.js';
+import { hashPassword } from '../utils/crypto.js';
 
 export const AuthContext = createContext(null);
 
 const AUTH_STORAGE_KEY = 'task_manager_auth_user';
 const USERS_STORAGE_KEY = 'task_manager_registered_users';
+const RATE_LIMIT_STORAGE_KEY = 'task_manager_auth_rate_limit';
 
 function readStorageJSON(key, fallback) {
   try {
@@ -27,7 +30,7 @@ function writeStorageJSON(key, value) {
       }
     }
   } catch {
-    // Ignore storage quota errors
+    // Storage quota fallback
   }
 }
 
@@ -43,22 +46,20 @@ export function createAuthStore(initialUser = null) {
     getUser: () => currentUser,
     isAuthenticated: () => Boolean(currentUser && currentUser.email),
     login: ({ email, password, name }) => {
-      if (!email || !String(email).trim()) {
+      const sanitizedEmail = sanitizeEmail(email);
+      if (!sanitizedEmail) {
         throw new Error('Email address is required');
       }
       if (!password || String(password).length < 4) {
         throw new Error('Password must be at least 4 characters');
       }
-      const normalizedEmail = String(email).trim().toLowerCase();
-      const displayName =
-        name && String(name).trim()
-          ? String(name).trim()
-          : normalizedEmail.split('@')[0];
+      const displayName = name ? sanitizeText(name, 50) : sanitizedEmail.split('@')[0];
 
       const userRecord = {
         id: `user_${Date.now()}`,
         name: displayName,
-        email: normalizedEmail,
+        email: sanitizedEmail,
+        role: 'Workspace Member',
         loggedInAt: new Date().toISOString(),
       };
       currentUser = userRecord;
@@ -90,38 +91,90 @@ export function AuthProvider({ children }) {
     writeStorageJSON(USERS_STORAGE_KEY, registeredUsers);
   }, [registeredUsers]);
 
-  const login = (formData) => {
-    const email = String(formData?.email || '').trim().toLowerCase();
+  // Client-side rate-limiting helper
+  const checkRateLimit = (email) => {
+    const rateData = readStorageJSON(RATE_LIMIT_STORAGE_KEY, {});
+    const now = Date.now();
+    const userAttempts = rateData[email] || { count: 0, lockUntil: 0 };
+
+    if (userAttempts.lockUntil && now < userAttempts.lockUntil) {
+      const waitSeconds = Math.ceil((userAttempts.lockUntil - now) / 1000);
+      return { allowed: false, message: `Too many attempts. Please wait ${waitSeconds}s.` };
+    }
+    return { allowed: true };
+  };
+
+  const recordFailedAttempt = (email) => {
+    const rateData = readStorageJSON(RATE_LIMIT_STORAGE_KEY, {});
+    const now = Date.now();
+    const userAttempts = rateData[email] || { count: 0, lockUntil: 0 };
+    const newCount = userAttempts.count + 1;
+
+    if (newCount >= 5) {
+      rateData[email] = { count: 0, lockUntil: now + 30000 }; // 30s lockout
+    } else {
+      rateData[email] = { count: newCount, lockUntil: 0 };
+    }
+    writeStorageJSON(RATE_LIMIT_STORAGE_KEY, rateData);
+  };
+
+  const clearRateLimit = (email) => {
+    const rateData = readStorageJSON(RATE_LIMIT_STORAGE_KEY, {});
+    delete rateData[email];
+    writeStorageJSON(RATE_LIMIT_STORAGE_KEY, rateData);
+  };
+
+  const login = async (formData) => {
+    const email = sanitizeEmail(formData?.email);
     const password = String(formData?.password || '');
-    const customName = String(formData?.name || '').trim();
+    const customName = sanitizeText(formData?.name || '', 60);
 
     if (!email) {
-      return { success: false, message: 'Email is required' };
+      return { success: false, message: 'Valid email is required.' };
     }
-    if (!password) {
-      return { success: false, message: 'Password is required' };
+    if (!password || password.length < 4) {
+      return { success: false, message: 'Password must be at least 4 characters.' };
     }
 
-    const existingUser = registeredUsers.find(
-      (item) => item.email.toLowerCase() === email
-    );
+    const rateCheck = checkRateLimit(email);
+    if (!rateCheck.allowed) {
+      return { success: false, message: rateCheck.message };
+    }
 
-    const resolvedName =
-      customName || existingUser?.name || email.split('@')[0] || 'User';
+    const passwordHash = await hashPassword(password);
+    const existingUser = registeredUsers.find((item) => item.email.toLowerCase() === email);
+
+    if (existingUser) {
+      // Validate password hash
+      if (existingUser.passwordHash && existingUser.passwordHash !== passwordHash) {
+        recordFailedAttempt(email);
+        return { success: false, message: 'Invalid credentials. Please verify your password.' };
+      }
+    }
+
+    clearRateLimit(email);
+
+    const resolvedName = customName || existingUser?.name || email.split('@')[0] || 'Member';
+    const isFirstUser = registeredUsers.length === 0;
 
     const sessionUser = {
       id: existingUser?.id || `usr_${Date.now()}`,
       name: resolvedName,
       email,
-      role: 'Workspace Member',
+      role: existingUser?.role || (isFirstUser ? 'Workspace Admin' : 'Workspace Member'),
       loggedInAt: new Date().toISOString(),
     };
 
     if (!existingUser) {
       setRegisteredUsers((prev) => [
         ...prev,
-        { ...sessionUser, passwordHash: btoa(password) },
+        { ...sessionUser, passwordHash },
       ]);
+    } else if (!existingUser.passwordHash) {
+      // Upgrade existing record to secure hash
+      setRegisteredUsers((prev) =>
+        prev.map((u) => (u.id === existingUser.id ? { ...u, passwordHash } : u))
+      );
     }
 
     setUser(sessionUser);
@@ -139,14 +192,19 @@ export function AuthProvider({ children }) {
 
   const updateProfile = (updates) => {
     if (!user) return null;
-    const updated = { ...user, ...updates };
+    const sanitizedName = updates.name ? sanitizeText(updates.name, 60) : user.name;
+    const updated = { ...user, ...updates, name: sanitizedName };
     setUser(updated);
+    setRegisteredUsers((prev) =>
+      prev.map((u) => (u.id === user.id ? { ...u, ...updates, name: sanitizedName } : u))
+    );
     return updated;
   };
 
   const value = {
     user,
     isAuthenticated: Boolean(user && user.email),
+    isAdmin: user?.role === 'Workspace Admin',
     registeredUsers,
     login,
     registerUser,
