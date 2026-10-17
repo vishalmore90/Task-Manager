@@ -17,21 +17,14 @@ A high-performance, security-focused task management system engineered with **Re
 - **Direct Workspace Route**: [https://task-manager-alpha-29.vercel.app/tasks](https://task-manager-alpha-29.vercel.app/tasks)
 - **Source Code**: [https://github.com/vishalmore90/Task-Manager](https://github.com/vishalmore90/Task-Manager)
 
----
+## About
 
-## About & Context
+**Task Manager** is a privacy-first, zero-latency workflow cockpit built for focused milestone execution. Engineered with React 18 and Vite, it delivers instant task management without database overhead, third-party trackers, or network delays.
 
-### Problem Statement
-Most task trackers and project management tools are overburdened with server latency, third-party trackers, bloated dependencies, and brittle network requirements. For individual operators and focused teams, a simple workflow update should not require remote roundtrips, database connection overhead, or intrusive data collection.
-
-### Engineering Solution
-Task Manager is engineered as a privacy-first, client-driven execution cockpit. It combines declarative React 18 primitives with sub-millisecond local state synchronization to deliver an instant, zero-latency workflow management experience.
-
-### Architectural Philosophy
-1. **Deterministic State Isolation**: Workspaces are partitioned by authenticated user identity. Tasks created by an account are strictly mapped to that account's session, preventing unauthorized data leakage across accounts.
-2. **Security-First Posture**: Authentication does not rely on insecure plaintext mocks. The app integrates standard SHA-256 cryptographic hashing via the native Web Crypto API, client-side brute-force lockout thresholds, and input sanitization against Cross-Site Scripting (XSS).
-3. **Intentional Design System**: Eliminates decorative bloat, saturated gradients, and pill-shaped controls in favor of an obsidian and cobalt palette, a single font pair (Plus Jakarta Sans and Inter), and unified button geometry.
-4. **Production Web Standards**: Includes zero-configuration SPA rewrites and enterprise HTTP security headers (`Content-Security-Policy`, `X-Frame-Options: DENY`, `Strict-Transport-Security`, and `Permissions-Policy`).
+- **Zero-Latency Execution**: Instant CRUD operations with deterministic local state synchronization.
+- **Security-First Architecture**: Native Web Crypto SHA-256 password hashing, rate limiting, and XSS input sanitization.
+- **User Data Isolation**: Workspace partitioning ensuring accounts only view and modify their assigned records.
+- **Production Hardened**: Pre-configured SPA rewrites and enterprise HTTP security headers for Vercel and Netlify.
 
 ---
 
