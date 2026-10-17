@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
-import { useTasks } from '../context/TaskContext.jsx';
+import { useTasks, INITIAL_TASKS } from '../context/TaskContext.jsx';
+import TaskCard from '../components/TaskCard.jsx';
 import { CheckCircle2, ShieldCheck, Zap } from 'lucide-react';
 
 export default function Home() {
@@ -82,6 +83,26 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Example Tasks Preview */}
+      <div className="mt-16">
+        <div className="mb-6">
+          <span className="text-xs font-semibold uppercase tracking-wider text-blue-400">
+            Preview
+          </span>
+          <h2 className="mt-1 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
+            Example Tasks
+          </h2>
+          <p className="mt-1 text-sm text-zinc-300">
+            Sample milestones demonstrating status indicators, priority tags, and action controls.
+          </p>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2">
+          {INITIAL_TASKS.slice(0, 2).map((task) => (
+            <TaskCard key={task.id} task={task} />
+          ))}
+        </div>
+      </div>
     </section>
   );
 }

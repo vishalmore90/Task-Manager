@@ -4,17 +4,17 @@ import { sanitizeText } from '../utils/sanitize.js';
 
 export const TaskContext = createContext(null);
 
-const TASKS_STORAGE_KEY = 'task_manager_tasks_data';
+const TASKS_STORAGE_KEY = 'task_manager_tasks_data_v2';
 
 export const INITIAL_TASKS = [
   {
     id: 'task_1',
     userId: 'usr_default',
-    title: 'Complete Core Architecture Review',
+    title: 'Complete React Architecture',
     description: 'Audit component hierarchy, props validation, and state isolation.',
     status: 'In Progress',
-    priority: 'High',
-    dueDate: '2026-10-25',
+    priority: 'Medium',
+    dueDate: '2026-10-14',
     createdAt: '2026-10-10T10:00:00.000Z',
     updatedAt: '2026-10-10T10:00:00.000Z',
   },
