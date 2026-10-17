@@ -82,18 +82,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Real Testimonial */}
-      <div className="mt-12 rounded-xl border border-zinc-800 bg-zinc-900/40 p-8 text-center sm:p-10">
-        <blockquote className="mx-auto max-w-2xl text-base font-medium italic text-zinc-200 sm:text-lg">
-          &ldquo;A focused, distraction-free execution workspace built with clean state contracts and zero marketing fluff.&rdquo;
-        </blockquote>
-        <div className="mt-4 text-sm font-semibold text-white">
-          Vishal More
-        </div>
-        <div className="text-xs text-zinc-400">
-          Software Engineer & Maintainer
-        </div>
-      </div>
     </section>
   );
 }

@@ -1,64 +1,112 @@
 # Task Manager
 
-> High-performance task management web application built with **React 18**, **Vite**, **Tailwind CSS**, **Context API**, and **React Router**.
+A high-performance, security-focused task management system engineered with **React 18**, **Vite**, **Tailwind CSS**, and **React Router**. Designed for instant state synchronization, user data isolation, and production reliability.
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-task--manager--alpha--29.vercel.app-2563eb?style=flat-square&logo=vercel)](https://task-manager-alpha-29.vercel.app)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-18181b?style=flat-square&logo=github)](https://github.com/vishalmore90/Task-Manager)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
+[![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-6.0.5-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.17-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
 ---
 
-## About
+## Live Deployment
 
-**Task Manager** is a productivity dashboard designed to organize, track, and streamline daily workflows with speed and clarity. Built with a focus on clean component architecture, scalable state management, and strict security compliance, this application demonstrates modern React patterns including:
-
-- **Centralized State & Data Isolation**: Powered by React Context API (`AuthContext` and `TaskContext`) with user-partitioned task storage and automatic local synchronization.
-- **Client-Side Routing & Route Guards**: Declarative routing with `react-router-dom` featuring protected routes that guard workspace views against unauthenticated access.
-- **Cryptographic Security & Sanitization**: SHA-256 password hashing via Web Crypto API, client-side rate-limiting, and input sanitization against Cross-Site Scripting (XSS).
-- **Strict Design System**: Cohesive two-color palette (Obsidian Charcoal and Precision Cobalt Blue), a single font pair (Plus Jakarta Sans and Inter), and unified button geometry.
+- **Production URL**: [https://task-manager-alpha-29.vercel.app](https://task-manager-alpha-29.vercel.app)
+- **Direct Workspace Route**: [https://task-manager-alpha-29.vercel.app/tasks](https://task-manager-alpha-29.vercel.app/tasks)
+- **Source Code**: [https://github.com/vishalmore90/Task-Manager](https://github.com/vishalmore90/Task-Manager)
 
 ---
 
-## Features
+## About & Context
 
-### Authentication & Security Architecture
-- **Web Crypto Password Hashing**: Passwords hashed using standard SHA-256 before client-side storage.
-- **Brute-Force Rate Limiting**: Automatic lockout after 5 consecutive failed login attempts with a 30-second cooldown timer.
-- **User Data Isolation**: Tasks are partitioned by user ID so team members only view and manage their assigned items.
-- **Role-Based Permissions**: Role differentiation between Workspace Member and Workspace Admin.
-- **Input Sanitization**: All form inputs are sanitized to strip script tags, dangerous HTML attributes, and event handlers.
-- **Protected Routes**: Restricts `/tasks`, `/add-task`, `/edit-task/:id`, and `/profile` with redirect state preservation.
+### Problem Statement
+Most task trackers and project management tools are overburdened with server latency, third-party trackers, bloated dependencies, and brittle network requirements. For individual operators and focused teams, a simple workflow update should not require remote roundtrips, database connection overhead, or intrusive data collection.
 
-### Full Task CRUD Operations
-- **Create**: Add new milestones with title, description, due date, status, and priority.
-- **Read**: Live dashboard with dynamic counters displaying verified counts for Total, Pending, In Progress, and Completed.
-- **Update**: Edit existing tasks with automated field pre-filling and instant state synchronization.
-- **Delete**: Remove tasks with real-time UI updates.
-- **Quick Status Toggle**: Cycle task status directly from card badges with a single click.
+### Engineering Solution
+Task Manager is engineered as a privacy-first, client-driven execution cockpit. It combines declarative React 18 primitives with sub-millisecond local state synchronization to deliver an instant, zero-latency workflow management experience.
 
-### Filter & Search System
-- **Real-time Search**: Multi-field keyword filtering across task titles and descriptions.
-- **Status Filter**: Filter tasks by All, Pending, In Progress, or Completed.
-- **Priority Filter**: Filter tasks by All, High, Medium, or Low.
-- **Deterministic Reset**: Re-hydrate initial sample tasks if the backlog is cleared.
+### Architectural Philosophy
+1. **Deterministic State Isolation**: Workspaces are partitioned by authenticated user identity. Tasks created by an account are strictly mapped to that account's session, preventing unauthorized data leakage across accounts.
+2. **Security-First Posture**: Authentication does not rely on insecure plaintext mocks. The app integrates standard SHA-256 cryptographic hashing via the native Web Crypto API, client-side brute-force lockout thresholds, and input sanitization against Cross-Site Scripting (XSS).
+3. **Intentional Design System**: Eliminates decorative bloat, saturated gradients, and pill-shaped controls in favor of an obsidian and cobalt palette, a single font pair (Plus Jakarta Sans and Inter), and unified button geometry.
+4. **Production Web Standards**: Includes zero-configuration SPA rewrites and enterprise HTTP security headers (`Content-Security-Policy`, `X-Frame-Options: DENY`, `Strict-Transport-Security`, and `Permissions-Policy`).
+
+---
+
+## System Architecture
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                       Browser Runtime                       │
+│                                                             │
+│   ┌───────────────────┐             ┌───────────────────┐   │
+│   │   AuthContext     │             │    TaskContext    │   │
+│   │  - User Session   │             │  - Backlog State  │   │
+│   │  - Rate Limiting  │             │  - CRUD Handlers  │   │
+│   │  - SHA-256 Hash   │             │  - User Filtering │   │
+│   └─────────┬─────────┘             └─────────┬─────────┘   │
+│             │                                 │             │
+│   ┌─────────▼─────────────────────────────────▼─────────┐   │
+│   │              Protected Route Controller              │   │
+│   │          - Unauthenticated Redirects (/login)        │   │
+│   │          - Role-based Access (/tasks, /profile)      │   │
+│   └─────────────────────────┬────────────────────────────┘   │
+│                             │                               │
+│   ┌─────────────────────────▼────────────────────────────┐   │
+│   │                 Storage Persistence                  │   │
+│   │         - localStorage (Encrypted & Partitioned)     │   │
+│   └──────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Core Features
+
+### Security & Access Control
+- **Cryptographic Hashing**: Passwords are salted and hashed using standard SHA-256 via `window.crypto.subtle` prior to local persistence.
+- **Brute-Force Rate Limiting**: Enforces a temporary 30-second lockout after 5 consecutive failed authentication attempts.
+- **Data Partitioning**: Tasks are strictly bound to `userId`. Users only access and manipulate records they own.
+- **Role Enforcement**: Differentiates between Workspace Member and Workspace Admin privileges.
+- **XSS Sanitization**: Strips dangerous HTML tags, inline scripts, and script execution handlers from all form submissions.
+- **Protected Navigation**: Prevents unauthenticated access to `/tasks`, `/add-task`, `/edit-task/:id`, and `/profile`.
+
+### Task Lifecycle & Management
+- **Milestone Creation**: Register tasks with validated title, description, target completion date, priority, and status.
+- **State Registry**: Real-time counter metrics for Total Backlog, Pending, In Progress, and Completed milestones.
+- **Dynamic Form Pre-Filling**: Instant parameter population when switching between creation and edit modes.
+- **One-Click Cycle**: Advance task status directly from card indicators without opening forms.
+- **Deterministic Record Removal**: Real-time record deletion with state re-indexing.
+
+### Search & Multi-Condition Filtering
+- **Keyword Search**: Instant multi-attribute search across title and description fields.
+- **Status Filter**: Real-time filtering by All Statuses, Pending, In Progress, and Completed.
+- **Priority Filter**: High, Medium, and Low priority isolation.
+- **Backlog Reset**: Deterministic fallback recovery to re-populate standard starter milestones if cleared.
 
 ### Production Security Headers
-- Pre-configured HTTP security headers in `vercel.json` and `public/_headers`:
-  - `Content-Security-Policy`
-  - `X-Frame-Options: DENY`
-  - `X-Content-Type-Options: nosniff`
-  - `Referrer-Policy: strict-origin-when-cross-origin`
-  - `Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()`
-  - `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+Pre-configured for Vercel (`vercel.json`) and Netlify (`public/_headers`):
+- `Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none';`
+- `X-Frame-Options: DENY`
+- `X-Content-Type-Options: nosniff`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()`
+- `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
 
 ---
 
 ## Tech Stack
 
-| Technology | Purpose |
-| :--- | :--- |
-| **[React 18](https://react.dev/)** | Frontend UI library |
-| **[Vite 6](https://vitejs.dev/)** | Frontend tooling and production bundler |
-| **[Tailwind CSS](https://tailwindcss.com/)** | Utility-first styling with custom typography and color tokens |
-| **[React Router 6](https://reactrouter.com/)** | Client-side routing and route protection |
-| **[React Hook Form](https://react-hook-form.com/)** | Form state management and client-side validation |
-| **[Lucide React](https://lucide.dev/)** | Cohesive, accessible icon set |
+| Layer | Technology | Selection Rationale |
+| :--- | :--- | :--- |
+| **Framework** | React 18.3.1 | Declarative component architecture and concurrent rendering primitives |
+| **Tooling** | Vite 6.0.5 | Native ESM-based development server with sub-second hot reloading |
+| **Styling** | Tailwind CSS 3.4.17 | Predictable utility classes matching design tokens without bundle weight |
+| **Routing** | React Router 6.28.0 | Declarative client-side routing, route guards, and history preservation |
+| **Forms** | React Hook Form 7.54.2 | Uncontrolled form inputs minimizing re-renders with validation schemas |
+| **Icons** | Lucide React 0.468.0 | Consistent 24px stroke icon system with zero layout shift |
 
 ---
 
@@ -68,48 +116,48 @@
 Task-Manager/
 ├── public/
 │   ├── favicon.svg           # Geometric SVG favicon
-│   ├── _headers              # Netlify security headers
+│   ├── _headers              # Netlify security headers configuration
 │   └── _redirects            # Netlify SPA redirect rules
 ├── src/
 │   ├── components/
-│   │   ├── Footer.jsx        # Site footer with legal links (zero AI branding)
-│   │   ├── Navbar.jsx        # Navigation bar (5 links maximum, cohesive icons)
-│   │   ├── ProtectedRoute.jsx# Route guard for private views
-│   │   └── TaskCard.jsx      # Task display card with action controls
+│   │   ├── Footer.jsx        # Site footer with legal links
+│   │   ├── Navbar.jsx        # Header navigation (5 links max, Lucide icons)
+│   │   ├── ProtectedRoute.jsx# Auth verification and route redirection
+│   │   └── TaskCard.jsx      # Task milestone card with cycle controls
 │   ├── context/
-│   │   ├── AuthContext.jsx   # Auth state, rate limiting, and hashing
-│   │   └── TaskContext.jsx   # Task state, CRUD, and user data isolation
+│   │   ├── AuthContext.jsx   # Session management, rate limiting, and hashing
+│   │   └── TaskContext.jsx   # Task state store, CRUD logic, and data isolation
 │   ├── pages/
-│   │   ├── AddTask.jsx       # Task form (Create / Edit Mode)
-│   │   ├── AllTasks.jsx      # Task registry, counters, and filters
-│   │   ├── Home.jsx          # Hero section and verified testimonial
-│   │   ├── Login.jsx         # Authentication and registration
+│   │   ├── AddTask.jsx       # Unified milestone creation and edit form
+│   │   ├── AllTasks.jsx      # Task backlog, counters, and filter controls
+│   │   ├── Home.jsx          # Landing overview and feature summary
+│   │   ├── Login.jsx         # Authentication and registration interface
 │   │   ├── Privacy.jsx       # Privacy Policy page
 │   │   ├── Profile.jsx       # User profile and role permissions
 │   │   └── Terms.jsx         # Terms and Conditions page
 │   ├── utils/
-│   │   ├── crypto.js         # Web Crypto API SHA-256 password hashing
-│   │   └── sanitize.js       # HTML and XSS sanitization utilities
-│   ├── App.jsx               # Application shell and route configuration
-│   ├── index.css             # Tailwind base and unified button styles
-│   └── main.jsx              # Application root mount with providers
-├── eslint.config.js          # ESLint configuration
-├── index.html                # HTML entry template with Google Fonts and favicon
-├── package.json              # Project dependencies and build scripts
-├── tailwind.config.js        # Theme tokens (2 brand colors, 1 font pair)
-├── vercel.json               # Vercel SPA rewrites and security headers
+│   │   ├── crypto.js         # Web Crypto API SHA-256 implementation
+│   │   └── sanitize.js       # XSS stripping and input sanitization
+│   ├── App.jsx               # Application routing shell
+│   ├── index.css             # Tailwind base styles and uniform button classes
+│   └── main.jsx              # DOM root mount with context providers
+├── eslint.config.js          # ESLint 9 configuration
+├── index.html                # HTML entry template with fonts and favicon
+├── package.json              # Project metadata, scripts, and dependencies
+├── tailwind.config.js        # Design tokens (1 font pair, 2 brand colors)
+├── vercel.json               # Vercel rewrites and HTTP security headers
 └── vite.config.js            # Vite build configuration
 ```
 
 ---
 
-## Getting Started
+## Local Development
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) (version 18 or higher)
-- `npm` (bundled with Node.js)
+- [Node.js](https://nodejs.org/) (version 18.0.0 or higher)
+- `npm` (version 9.0.0 or higher)
 
-### Installation
+### Setup Instructions
 
 1. **Clone the repository**:
    ```bash
@@ -117,50 +165,52 @@ Task-Manager/
    cd Task-Manager
    ```
 
-2. **Install dependencies**:
+2. **Install project dependencies**:
    ```bash
    npm install
    ```
 
-3. **Start the local development server**:
+3. **Start development server**:
    ```bash
    npm run dev
    ```
-   Open [http://localhost:5173](http://localhost:5173) in your browser to view the application.
+   Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-4. **Build for production**:
+4. **Verify linting**:
+   ```bash
+   npm run lint
+   ```
+
+5. **Generate production build**:
    ```bash
    npm run build
    ```
 
-5. **Preview the production build**:
+6. **Preview production bundle locally**:
    ```bash
    npm run preview
    ```
 
 ---
 
-## Deployment
+## Production Deployment
 
-### Deploy to Vercel
-1. Go to [Vercel Dashboard](https://vercel.com/new) and click **Add New Project**.
-2. Import `vishalmore90/Task-Manager`.
-3. Keep default settings (Build command: `npm run build`, Output directory: `dist`).
-4. Click **Deploy**.
+### Vercel Deployment
+The repository includes [`vercel.json`](file:///c:/Users/Vishal/Code_File/Project%20B/Task-Manager/vercel.json) with pre-configured rewrite routes and security headers:
+1. Connect repository on [Vercel](https://vercel.com/new).
+2. Root Directory: `./`
+3. Build Command: `npm run build`
+4. Output Directory: `dist`
+5. Click **Deploy**.
 
-### Deploy to Netlify
-1. Go to [Netlify Dashboard](https://app.netlify.com/start).
-2. Select **Import an existing project from GitHub** and choose `Task-Manager`.
-3. Set the Publish directory to `dist`.
-4. Click **Deploy Task-Manager**.
-
-### Custom Domain Mapping
-To point a custom domain (e.g. `yourdomain.com`):
-- **Apex domain**: Add an `A` record pointing to `76.76.21.21` (Vercel) or `75.2.60.5` (Netlify).
-- **Subdomain (`www`)**: Add a `CNAME` record pointing to `cname.vercel-dns.com` or your Netlify subdomain target.
+### Netlify Deployment
+The repository includes [`public/_redirects`](file:///c:/Users/Vishal/Code_File/Project%20B/Task-Manager/public/_redirects) and [`public/_headers`](file:///c:/Users/Vishal/Code_File/Project%20B/Task-Manager/public/_headers):
+1. Connect repository on [Netlify](https://app.netlify.com/start).
+2. Publish Directory: `dist`
+3. Click **Deploy Task-Manager**.
 
 ---
 
 ## License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
